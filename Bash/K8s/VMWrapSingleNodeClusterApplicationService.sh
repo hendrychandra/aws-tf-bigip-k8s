@@ -64,7 +64,7 @@ done
 /bin/bash $HOME/PrepareContainerRuntimeInterface.sh
 /bin/bash $HOME/PrepareCommonK8s.sh $WorkerNodeStatus $KubernetesVersion
 /bin/bash $HOME/PrepareK8sSingleNode.sh $PodNetworkCIDR $ServiceCIDR $ContainerNetworkInterface $K8sVersion
-# /bin/bash $HOME/PrepareApplicationService.sh
+/bin/bash $HOME/PrepareApplicationService.sh
 
 #╔═══════════════════╗
 #║   Review Status   ║
