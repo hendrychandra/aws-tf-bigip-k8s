@@ -7,13 +7,13 @@ let counter=0;while ( (sudo lsof /var/cache/apt/archives/lock) || (sudo lsof /va
 sudo apt-get update -y && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
 
 sudo echo "@reboot   root   swapoff -a" | sudo tee -a /etc/crontab
-# sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 sudo swapoff -a
 
 sudo echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf
 sudo echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.conf
 sudo echo "net.bridge.bridge-nf-call-ip6tables=1" | sudo tee -a /etc/sysctl.conf
-# sudo echo '1' | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+sudo echo '1' | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
 
 sudo printf "overlay\nbr_netfilter" | sudo tee -a /etc/modules-load.d/containerd.conf
 sudo modprobe overlay

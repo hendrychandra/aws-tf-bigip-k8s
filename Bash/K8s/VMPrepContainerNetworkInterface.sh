@@ -11,7 +11,7 @@ cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendr
 
 Loop_Period="9s"
 
-CalicoBlockSize=24         # <<<--- Calico Parameter
+CalicoBlockSize=24         # <<<--- Calico Operator Parameter
 
 declare -a file_url
 declare -a file_name
@@ -19,17 +19,36 @@ declare -a file_acl
 declare -a file_own
 declare -a file_result
 
-file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml"         # <<<--- Calico Parameter
-file_name[0]="$HOME/calico-operator.yaml"
+###################
+# Calico Operator #
+###################
+
+# file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml"         # <<<--- Calico Operator Parameter
+# file_name[0]="$HOME/calico-operator.yaml"
+# file_acl[0]="644"
+# file_own[0]="ubuntu:ubuntu"
+
+# file_url[1]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml"         # <<<--- Calico Operator Parameter
+# file_name[1]="$HOME/calico-resources.yaml"
+# file_acl[1]="644"
+# file_own[1]="ubuntu:ubuntu"
+
+# max_counter=1
+
+
+
+###################
+# Calico Manifest #
+###################
+
+file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml"         # <<<--- Calico Manifest Parameter
+file_name[0]="$HOME/calico.yaml"
 file_acl[0]="644"
 file_own[0]="ubuntu:ubuntu"
 
-file_url[1]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml"         # <<<--- Calico Parameter
-file_name[1]="$HOME/calico-resources.yaml"
-file_acl[1]="644"
-file_own[1]="ubuntu:ubuntu"
+max_counter=0
 
-max_counter=1
+
 
 URLRegEx="^(http:\/\/|https:\/\/)?[a-z0-9]+((\-|\.)[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)*$"
 
@@ -48,17 +67,33 @@ for counter in $(seq 0 $max_counter) ; do
  fi
 done
 
-kubectl create -f $HOME/calico-operator.yaml
 
-cat $HOME/calico-resources.yaml | sed -n '/^ *- blockSize: [0-9]\+$/p'
-sed -i 's/- blockSize: [0-9]\+$/- blockSize: '"$CalicoBlockSize"'/g' $HOME/calico-resources.yaml
-cat $HOME/calico-resources.yaml | sed -n '/^ *- blockSize: [0-9]\+$/p'
 
-cat $HOME/calico-resources.yaml | sed -n '/^ *cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$/p'
-sed -i 's#cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$#cidr: '"$PodNetworkCIDR"'#g' $HOME/calico-resources.yaml
-cat $HOME/calico-resources.yaml | sed -n '/^ *cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$/p'
+###################
+# Calico Operator #
+###################
 
-kubectl apply -f $HOME/calico-resources.yaml
+# kubectl create -f $HOME/calico-operator.yaml
+
+# cat $HOME/calico-resources.yaml | sed -n '/^ *- blockSize: [0-9]\+$/p'
+# sed -i 's/- blockSize: [0-9]\+$/- blockSize: '"$CalicoBlockSize"'/g' $HOME/calico-resources.yaml
+# cat $HOME/calico-resources.yaml | sed -n '/^ *- blockSize: [0-9]\+$/p'
+
+# cat $HOME/calico-resources.yaml | sed -n '/^ *cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$/p'
+# sed -i 's#cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$#cidr: '"$PodNetworkCIDR"'#g' $HOME/calico-resources.yaml
+# cat $HOME/calico-resources.yaml | sed -n '/^ *cidr: [0-9]\+.[0-9]\+.[0-9]\+.[0-9]\+\/[0-9]\+$/p'
+
+# kubectl apply -f $HOME/calico-resources.yaml
+
+
+
+###################
+# Calico Manifest #
+###################
+
+kubectl apply -f $HOME/calico.yaml
+
+
 
 Loop="Yes"
 while ( [ "$Loop" == "Yes" ] ) ; do
