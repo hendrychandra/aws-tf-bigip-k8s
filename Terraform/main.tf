@@ -232,6 +232,12 @@ resource "aws_eip" "public-gw-eip-terraform-test" {
 
 
 
+
+
+
+
+
+
 resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   # ami               = data.aws_ami.ubuntu-20-ami-terraform-test.id
   ami = "ami-084009f26f70a7c0b"
@@ -247,6 +253,13 @@ resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   network_interface {
     network_interface_id = aws_network_interface.private-gw-network_interface-terraform-test.id
     device_index         = 1
+  }
+  root_block_device {
+    delete_on_termination = true
+    volume_size           = 69
+    tags = {
+      Name = "root-volume-gw-ubuntu-20-instance-terraform-test"
+    }
   }
   user_data = <<EOF
 #!/bin/bash
