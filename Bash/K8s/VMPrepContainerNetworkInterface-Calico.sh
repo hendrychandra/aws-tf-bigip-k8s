@@ -6,7 +6,7 @@
 
 # Based on reference below, there are 2 ways to implement Calico:
 # (1) Calico Operator (Bloated Version)
-# (2) Calico Manifests (Simple Version)
+# (2) Calico Manifest (Simple Version)
 #
 # Reference :
 # https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/config-options
@@ -17,7 +17,7 @@
 # Calico is installed by an operator which manages the installation, upgrade, and general lifecycle of a Calico cluster.
 # The operator is installed directly on the cluster as a Deployment, and is configured through one or more custom Kubernetes API resources.
 #
-# Calico Manifests
+# Calico Manifest
 # Calico can also be installed using raw manifests as an alternative to the operator.
 # The manifests contain the necessary resources for installing Calico on each node in your Kubernetes cluster.
 # Using manifests is not recommended as they cannot automatically manage the lifecycle of the Calico as the operator does.
@@ -33,7 +33,12 @@ cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendr
 
 Loop_Period="9s"
 
+# Change the values into empty string '' or "", if you just want to install the latest versions but don't know which version is the latest one.
+CalicoVersion='3.25.1'
+
 # CalicoBlockSize=24         # <<<--- Calico Operator Parameter
+
+
 
 declare -a file_url
 declare -a file_name
@@ -45,12 +50,20 @@ declare -a file_result
 # # Calico Operator #
 # ###################
 
-# file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml"         # <<<--- Calico Operator Parameter
+# if [ -z "$CalicoVersion" ] ; then
+#  file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/master/manifests/tigera-operator.yaml"         # <<<--- Calico Operator Parameter
+# else
+#  file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v$CalicoVersion/manifests/tigera-operator.yaml"         # <<<--- Calico Operator Parameter
+# fi
 # file_name[0]="$HOME/calico-operator.yaml"
 # file_acl[0]="644"
 # file_own[0]="ubuntu:ubuntu"
 
-# file_url[1]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml"         # <<<--- Calico Operator Parameter
+# if [ -z "$CalicoVersion" ] ; then
+#  file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/master/manifests/custom-resources.yaml"         # <<<--- Calico Operator Parameter
+# else
+#  file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v$CalicoVersion/manifests/custom-resources.yaml"         # <<<--- Calico Operator Parameter
+# fi
 # file_name[1]="$HOME/calico-resources.yaml"
 # file_acl[1]="644"
 # file_own[1]="ubuntu:ubuntu"
@@ -63,7 +76,11 @@ declare -a file_result
 # Calico Manifest #
 ###################
 
-file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml"         # <<<--- Calico Manifest Parameter
+if [ -z "$CalicoVersion" ] ; then
+ file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml"         # <<<--- Calico Manifest Parameter
+else
+ file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v$CalicoVersion/manifests/calico.yaml"         # <<<--- Calico Manifest Parameter
+fi
 file_name[0]="$HOME/calico.yaml"
 file_acl[0]="644"
 file_own[0]="ubuntu:ubuntu"
