@@ -50,6 +50,10 @@ max_counter=0
 
 
 
+###############
+# Common Part #
+###############
+
 URLRegEx="^(http:\/\/|https:\/\/)?[a-z0-9]+((\-|\.)[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)*$"
 
 for counter in $(seq 0 $max_counter) ; do
@@ -95,22 +99,59 @@ kubectl apply -f $HOME/calico.yaml
 
 
 
+###################
+# Calico Operator #
+###################
+
+# Loop="Yes"
+# while ( [ "$Loop" == "Yes" ] ) ; do
+#  if [ `kubectl get pod --namespace calico-system --no-headers | wc -l` -gt 0 ] && [ `kubectl get pod --namespace calico-system -o wide --no-headers | grep "Running" | wc -l` -ge `kubectl get pod --namespace calico-system --no-headers | wc -l` ] ; then
+#   echo "`date +%Y%m%d%H%M%S` Calico is Ready."
+#   Loop="No"
+#  else
+#   echo "`date +%Y%m%d%H%M%S` Waiting for Calico to be Ready."
+#   sleep $Loop_Period
+#  fi
+# done
+
+
+
+###################
+# Calico Manifest #
+###################
+
 Loop="Yes"
 while ( [ "$Loop" == "Yes" ] ) ; do
- if [ `kubectl get pod --namespace calico-system --no-headers | wc -l` -gt 0 ] && [ `kubectl get pod --namespace calico-system -o wide --no-headers | grep "Running" | wc -l` -ge `kubectl get pod --namespace calico-system --no-headers | wc -l` ] ; then
-  echo "`date +%Y%m%d%H%M%S` Calico is Ready."
+ if [ `kubectl get pod --all-namespaces --no-headers | wc -l` -gt 0 ] && [ `kubectl get pod --all-namespaces -o wide --no-headers | grep -e "Completed" -e "Running" | wc -l` -ge `kubectl get pod --all-namespaces --no-headers | wc -l` ] ; then
+  echo "`date +%Y%m%d%H%M%S` All Pods are Completed or Running."
   Loop="No"
  else
-  echo "`date +%Y%m%d%H%M%S` Waiting for Calico to be Ready."
+  echo "`date +%Y%m%d%H%M%S` Waiting for All Pods to be Completed or Running."
   sleep $Loop_Period
  fi
 done
+
+
 
 #╔═══════════════════╗
 #║   Review Status   ║
 #╚═══════════════════╝
 
-kubectl get pods --namespace calico-system
+###################
+# Calico Operator #
+###################
+
+# kubectl get pods --namespace calico-system
+
+
+
+###################
+# Calico Manifest #
+###################
+
+kubectl get pods --all-namespaces
+
+
 
 #╔═════════╗
 #║   End   ║
