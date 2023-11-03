@@ -4,6 +4,28 @@
 # ║   Calico   ║
 # ╚════════════╝
 
+# Based on reference below, there are 2 ways to implement Calico:
+# (1) Calico Operator (Bloated Version)
+# (2) Calico Manifests (Simple Version)
+#
+# Reference :
+# https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/config-options
+#
+# Concepts
+#
+# Calico Operator
+# Calico is installed by an operator which manages the installation, upgrade, and general lifecycle of a Calico cluster.
+# The operator is installed directly on the cluster as a Deployment, and is configured through one or more custom Kubernetes API resources.
+#
+# Calico Manifests
+# Calico can also be installed using raw manifests as an alternative to the operator.
+# The manifests contain the necessary resources for installing Calico on each node in your Kubernetes cluster.
+# Using manifests is not recommended as they cannot automatically manage the lifecycle of the Calico as the operator does.
+# However, manifests may be useful for clusters that require highly specific modifications to the underlying Kubernetes resources.
+
+# To Do :
+# Find a Better Container Network Interface (CNI), Calico has been acting up too much, pushing us towards their own agendas, similar to what Microsoft or Google have been doing.
+
 sudo echo "Executing $0 $1 $2 $3 $4 $5 $6 $7 $8 $9"
 cd $HOME
 
@@ -19,9 +41,9 @@ declare -a file_acl
 declare -a file_own
 declare -a file_result
 
-###################
-# Calico Operator #
-###################
+# ###################
+# # Calico Operator #
+# ###################
 
 # file_url[0]="https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml"         # <<<--- Calico Operator Parameter
 # file_name[0]="$HOME/calico-operator.yaml"
@@ -73,9 +95,9 @@ done
 
 
 
-###################
-# Calico Operator #
-###################
+# ###################
+# # Calico Operator #
+# ###################
 
 # kubectl create -f $HOME/calico-operator.yaml
 
@@ -99,9 +121,9 @@ kubectl apply -f $HOME/calico.yaml
 
 
 
-###################
-# Calico Operator #
-###################
+# ###################
+# # Calico Operator #
+# ###################
 
 # Loop="Yes"
 # while ( [ "$Loop" == "Yes" ] ) ; do
@@ -137,9 +159,9 @@ done
 #║   Review Status   ║
 #╚═══════════════════╝
 
-###################
-# Calico Operator #
-###################
+# ###################
+# # Calico Operator #
+# ###################
 
 # kubectl get pods --namespace calico-system
 
