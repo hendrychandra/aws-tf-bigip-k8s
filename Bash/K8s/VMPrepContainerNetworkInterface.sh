@@ -33,7 +33,7 @@ cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendr
 
 Loop_Period="9s"
 
-CalicoBlockSize=24         # <<<--- Calico Operator Parameter
+# CalicoBlockSize=24         # <<<--- Calico Operator Parameter
 
 declare -a file_url
 declare -a file_name
