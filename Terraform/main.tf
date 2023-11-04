@@ -14,10 +14,18 @@ provider "aws" {
 
 data "aws_ami" "ubuntu-20-ami-terraform-test" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["amazon", "099720109477"]
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["ubuntu/images/*"]
+  }
+  filter {
+    name   = "name"
+    values = ["*/ubuntu-focal-20.04-amd64-server-*"]
   }
   filter {
     name   = "virtualization-type"
@@ -239,10 +247,10 @@ resource "aws_eip" "public-gw-eip-terraform-test" {
 
 
 resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
-  # ami               = data.aws_ami.ubuntu-20-ami-terraform-test.id
-  ami = "ami-084009f26f70a7c0b"
-  # instance_type     = "t3a.medium"
-  instance_type     = "m5.xlarge"
+  # ami               = "ami-084009f26f70a7c0b"
+  # instance_type     = "m5.xlarge"
+  ami               = data.aws_ami.ubuntu-20-ami-terraform-test.id
+  instance_type     = "t3a.medium"
   depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test, aws_network_interface.private-gw-network_interface-terraform-test]
   availability_zone = "ap-southeast-1a"
   key_name          = "AWS_F5_Singapore_KeyPair"
@@ -278,9 +286,9 @@ EOF
 
 
 
-# output "ubuntu-20-ami" {
-#  value = data.aws_ami.ubuntu-20-ami-terraform-test
-# }
+output "ubuntu-20-ami" {
+  value = data.aws_ami.ubuntu-20-ami-terraform-test.arn
+}
 
 output "public_ip" {
   value = aws_eip.public-gw-eip-terraform-test.public_ip
