@@ -189,8 +189,8 @@ done
 Loop_Period="9s"
 Loop="Yes"
 while ( [ "$Loop" == "Yes" ] ) ; do
- if ( kubectl exec -it -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /hackazon-db-pw.txt ) ; then
-  echo "Hackazon (UserID:eMail:Password) admin:admin@hackazon.com:$(kubectl exec -it -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /hackazon-db-pw.txt)"
+ if ( kubectl exec -i -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /hackazon-db-pw.txt ) ; then
+  echo "Hackazon (UserID:eMail:Password) admin:admin@hackazon.com:$(kubectl exec -i -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /hackazon-db-pw.txt)"
   Loop="No"
  else
   echo "`date +%Y%m%d%H%M%S` Waiting for Hackazon's configuration to be Completed."
@@ -199,9 +199,9 @@ while ( [ "$Loop" == "Yes" ] ) ; do
 done
 
 # Correction to the 'sendmail' mail-agent which does not exist
-kubectl exec -it -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /var/www/hackazon/assets/config/email.php
-kubectl exec -it -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- sed -i "s/'type' *=> 'sendmail'/'type' => 'native'/g" /var/www/hackazon/assets/config/email.php
-kubectl exec -it -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /var/www/hackazon/assets/config/email.php
+kubectl exec -i -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /var/www/hackazon/assets/config/email.php
+kubectl exec -i -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- sed -i "s/'type' *=> 'sendmail'/'type' => 'native'/g" /var/www/hackazon/assets/config/email.php
+kubectl exec -i -n hackazon $(kubectl get pods -n hackazon --no-headers=true | awk '{print $1}') -- cat /var/www/hackazon/assets/config/email.php
 
 # There is a glitch, if you access directly to nodePort: 30082, the glitch appears after you login, or when registering new user:
 # "Error: 400 Invalid Referer"
@@ -1692,9 +1692,9 @@ while ( [ "$Loop" == "Yes" ] ) ; do
  fi
 done
 
-kubectl exec -it -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- ls -lap /var/www/html
-kubectl exec -it -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- mkdir --mode=777 --parents /var/www/html/contact
-kubectl exec -it -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- ls -lap /var/www/html
+kubectl exec -i -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- ls -lap /var/www/html
+kubectl exec -i -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- mkdir --mode=777 --parents /var/www/html/contact
+kubectl exec -i -n arcadia $(kubectl get pods -n arcadia --no-headers=true | awk '{print $1}' | grep "main") -- ls -lap /var/www/html
 
 Loop_Period="9s"
 until [ `kubectl get ingress --namespace arcadia --no-headers | grep -e "arcadia" | wc -l` -gt 0 ] ; do

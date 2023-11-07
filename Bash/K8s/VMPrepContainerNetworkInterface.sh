@@ -34,7 +34,7 @@ cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendr
 Loop_Period="9s"
 
 # Change the values into empty string '' or "", if you just want to install the latest versions but don't know which version is the latest one.
-CalicoVersion='3.25.1'
+CalicoVersion=''
 
 # CalicoBlockSize=24         # <<<--- Calico Operator Parameter
 

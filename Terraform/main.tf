@@ -1,37 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-    }
-  }
-}
-
-provider "aws" {
-  region = "ap-southeast-1"
-  # Reference : https://discuss.hashicorp.com/t/using-credential-created-by-aws-sso-for-terraform/23075/4
-  profile = "A-User-Profile"
-}
-
-data "aws_ami" "ubuntu-20-ami-terraform-test" {
-  most_recent = true
-  owners      = ["amazon", "099720109477"]
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/*"]
-  }
-  filter {
-    name   = "name"
-    values = ["*/ubuntu-focal-20.04-amd64-server-*"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
 
 
 
@@ -276,22 +242,6 @@ EOF
   tags = {
     Name = "gw-ubuntu-20-instance-terraform-test"
   }
-}
-
-
-
-
-
-
-
-
-
-output "ubuntu-20-ami" {
-  value = data.aws_ami.ubuntu-20-ami-terraform-test.arn
-}
-
-output "public_ip" {
-  value = aws_eip.public-gw-eip-terraform-test.public_ip
 }
 
 
