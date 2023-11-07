@@ -21,7 +21,7 @@ sudo tee /etc/apt/sources.list.d/kubernetes.list << EOF
 deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 
-until ((kubeadm version | grep -i "kubeadm" | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubectl version | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubelet --version | grep -i "kubernetes")) ; do
+until ((kubeadm version | grep -i "kubeadm" | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubectl version | grep -i "version") && (kubelet --version | grep -i "kubernetes")) ; do
  if [ -z "$KubernetesVersion" ] ; then
   let counter=0;while ( (sudo lsof /var/cache/apt/archives/lock) || (sudo lsof /var/lib/apt/lists/lock) || (sudo lsof /var/lib/dpkg/lock*) || ((`(ps aux -A | grep -i -c "apt")` > 1)) );do let counter++;echo "$counter";if (sudo lsof /var/cache/apt/archives/lock);then printf "$counter sudo lsof /var/cache/apt/archives/lock\n`sudo lsof /var/cache/apt/archives/lock`\n";fi;if (sudo lsof /var/lib/apt/lists/lock);then printf "$counter sudo lsof /var/lib/apt/lists/lock\n`sudo lsof /var/lib/apt/lists/lock`\n";fi;if (sudo lsof /var/lib/dpkg/lock*);then printf "$counter sudo lsof /var/lib/dpkg/lock*\n`sudo lsof /var/lib/dpkg/lock*`\n";fi;if ((`(ps aux -A | grep -i -c "apt")` > 1));then printf "$counter ps aux -A | grep -i \"apt\"\n`ps aux -A | grep -i \"apt\"`\n";fi;sleep 1s;done
   sudo apt-get update -y && sudo apt-get install -y kubelet kubeadm kubectl
