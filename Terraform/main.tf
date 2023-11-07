@@ -245,3 +245,24 @@ EOF
 }
 
 
+
+
+
+
+
+
+
+data "aws_route53_zone" "parent-domain" {
+  name = "ggrks.click."
+}
+
+resource "aws_route53_record" "sub-domain" {
+  depends_on = [aws_instance.gw-ubuntu-20-instance-terraform-test]
+  zone_id    = data.aws_route53_zone.parent-domain.zone_id
+  name       = "demo.${data.aws_route53_zone.parent-domain.name}"
+  type       = "A"
+  ttl        = "22"
+  records    = [aws_instance.gw-ubuntu-20-instance-terraform-test.public_ip]
+}
+
+
