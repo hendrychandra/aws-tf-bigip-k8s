@@ -1,6 +1,10 @@
 
 
 
+**/Note.text
+
+
+
 *.hcl
 *.lock.*
 .terraform.*
