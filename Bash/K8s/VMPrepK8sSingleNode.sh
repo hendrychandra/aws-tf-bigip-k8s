@@ -37,6 +37,12 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+# Only one of the 'taint removal' below needs to work.
+# 'node-role.kubernetes.io/master' was old taint name for control-plane node.
+# Current/New/Updated taint name is 'node-role.kubernetes.io/control-plane'.
+#
+# node/node-name untainted
+# error: taint "node-role.kubernetes.io/master" not found
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 kubectl taint nodes --all node-role.kubernetes.io/master-
 

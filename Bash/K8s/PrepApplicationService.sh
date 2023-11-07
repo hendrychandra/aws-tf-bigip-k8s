@@ -9,9 +9,15 @@ cd $HOME
 
 # Note: NGINX Ingress needs ample time between: NGINX Ingress Controller creation, and when the Ingress object created.
 
+# Change the values into empty string '' or "", if you just want to install the latest versions but don't know which version is the latest one.
+KubernetesIngressControllerVersion='1.9.4'
+
 # Reference : https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal-clusters
-# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/baremetal/deploy.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/baremetal/deploy.yaml
+if [ -z "$KubernetesIngressControllerVersion" ] ; then
+ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
+else
+ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v$KubernetesIngressControllerVersion/deploy/static/provider/baremetal/deploy.yaml
+fi
 kubectl patch service --namespace ingress-nginx ingress-nginx-controller --patch '{"spec":{"externalTrafficPolicy":"Cluster","type":"NodePort","ports":[{"port":80,"nodePort":30080},{"port":443,"nodePort":30443}]}}'
 
 Loop_Period="9s"

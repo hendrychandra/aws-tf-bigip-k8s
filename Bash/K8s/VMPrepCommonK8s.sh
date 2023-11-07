@@ -32,7 +32,7 @@ until ((kubeadm version | grep -i "kubeadm" | grep -i "version" | grep -i "info"
  # sudo apt-mark hold kubelet kubeadm kubectl
 done
 
-if ((kubeadm version | grep -i "kubeadm" | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubectl version | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubelet --version | grep -i "kubernetes")) ; then
+if ((kubeadm version | grep -i "kubeadm" | grep -i "version" | grep -i "info" | grep -i "major" | grep -i "minor") && (kubectl version | grep -i "version") && (kubelet --version | grep -i "kubernetes")) ; then
  echo "`date +%Y%m%d%H%M%S` Worker Node Ready ." | tee $WorkerNodeStatus
 else
  echo "`date +%Y%m%d%H%M%S` Error ." | tee $WorkerNodeStatus
