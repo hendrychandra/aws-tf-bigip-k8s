@@ -166,6 +166,12 @@ variable "aws-public-route-table-tag-name" {
   default     = "aws-public-route-table-tag-name"
 }
 
+variable "aws-private-route-table-tag-name" {
+  description = "Name Tag of AWS Route Table for Private Subnet"
+  type        = string
+  default     = "aws-private-route-table-tag-name"
+}
+
 
 
 ##############
@@ -186,7 +192,61 @@ variable "aws-public-subnet-tag-name" {
   default     = "aws-public-subnet-tag-name"
 }
 
+variable "aws-private-subnet-cidr-infix" {
+  description = "The third IPv4 segments of AWS Subnet CIDR Block"
+  type        = string
+  default     = "10"
+  # This will be combined with aws-vpc-cidr-prefix, and the rest of the CIDR Block will be: ".0/24".
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.0/24"
+}
 
+variable "aws-private-subnet-tag-name" {
+  description = "Name Tag of AWS Private Subnet"
+  type        = string
+  default     = "aws-private-subnet-tag-name"
+}
+
+
+
+
+
+
+
+
+
+################
+# AWS Instance #
+################
+
+variable "k8s-master1-instance-type" {
+  description = "AWS Instance Type for K8s"
+  type        = string
+  default     = "t3a.medium"
+}
+
+variable "k8s-master1-instance-tag-name" {
+  description = "Name Tag of AWS Instance"
+  type        = string
+  default     = "k8s-master1-instance-tag-name"
+}
+
+variable "k8s-master1-instance-root-block-device-delete-on-termination" {
+  description = "Value of Delete on Termination of Root Block Device of AWS Instance"
+  type        = bool
+  default     = true
+}
+
+variable "k8s-master1-instance-root-block-device-volume-size" {
+  description = "Value of Volume Size of Root Block Device of AWS Instance"
+  type        = number
+  default     = 69
+}
+
+variable "k8s-master1-instance-root-block-device-tag-name" {
+  description = "Name Tag of Root Block Device of AWS Instance"
+  type        = string
+  default     = "k8s-master1-instance-root-block-device-tag-name"
+}
 
 
 

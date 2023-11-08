@@ -57,7 +57,7 @@ resource "aws_route_table" "private-route_table-terraform-test" {
   vpc_id     = aws_vpc.vpc-terraform-test.id
   depends_on = [aws_vpc.vpc-terraform-test, aws_internet_gateway.internet_gateway-terraform-test]
   tags = {
-    Name = "private-route_table-terraform-test"
+    Name = var.aws-private-route-table-tag-name
   }
 }
 
@@ -65,9 +65,9 @@ resource "aws_subnet" "private-subnet-terraform-test" {
   vpc_id            = aws_vpc.vpc-terraform-test.id
   depends_on        = [aws_vpc.vpc-terraform-test]
   availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
-  cidr_block        = "10.0.10.0/24"
+  cidr_block        = "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.0/24"
   tags = {
-    Name = "private-subnet-terraform-test"
+    Name = var.aws-private-subnet-tag-name
   }
 }
 
@@ -213,10 +213,8 @@ resource "aws_eip" "public-gw-eip-terraform-test" {
 
 
 resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
-  # ami               = "ami-084009f26f70a7c0b"
-  # instance_type     = "m5.xlarge"
   ami               = data.aws_ami.k8s-ami.id
-  instance_type     = "t3a.medium"
+  instance_type     = var.k8s-master1-instance-type
   depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test, aws_network_interface.private-gw-network_interface-terraform-test]
   availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
   key_name          = var.aws-ec2-keypair-name
@@ -229,10 +227,10 @@ resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
     device_index         = 1
   }
   root_block_device {
-    delete_on_termination = true
-    volume_size           = 69
+    delete_on_termination = var.k8s-master1-instance-root-block-device-delete-on-termination
+    volume_size           = var.k8s-master1-instance-root-block-device-volume-size
     tags = {
-      Name = "root-volume-gw-ubuntu-20-instance-terraform-test"
+      Name = var.k8s-master1-instance-root-block-device-tag-name
     }
   }
   user_data = <<EOF
@@ -240,7 +238,7 @@ resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
 cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapSingleNodeClusterApplicationService.sh;sudo chmod 777 /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh'
 EOF
   tags = {
-    Name = "gw-ubuntu-20-instance-terraform-test"
+    Name = var.k8s-master1-instance-tag-name
   }
 }
 
