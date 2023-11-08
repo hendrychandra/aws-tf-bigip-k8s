@@ -2,10 +2,10 @@
 
 
 resource "aws_vpc" "vpc-terraform-test" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = "${var.aws-vpc-cidr-prefix}.0.0/16"
   instance_tenancy = "default"
   tags = {
-    Name = "vpc-terraform-test"
+    Name = var.aws-vpc-tag-name
   }
 }
 
@@ -13,7 +13,7 @@ resource "aws_internet_gateway" "internet_gateway-terraform-test" {
   vpc_id     = aws_vpc.vpc-terraform-test.id
   depends_on = [aws_vpc.vpc-terraform-test]
   tags = {
-    Name = "internet_gateway-terraform-test"
+    Name = var.aws-internet-gateway-tag-name
   }
 }
 
@@ -23,15 +23,15 @@ resource "aws_route_table" "public-route_table-terraform-test" {
   vpc_id     = aws_vpc.vpc-terraform-test.id
   depends_on = [aws_vpc.vpc-terraform-test, aws_internet_gateway.internet_gateway-terraform-test]
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.aws-route-cidr-any-ipv4
     gateway_id = aws_internet_gateway.internet_gateway-terraform-test.id
   }
   route {
-    ipv6_cidr_block = "::/0"
+    ipv6_cidr_block = var.aws-route-cidr-any-ipv6
     gateway_id      = aws_internet_gateway.internet_gateway-terraform-test.id
   }
   tags = {
-    Name = "public-route_table-terraform-test"
+    Name = var.aws-public-route-table-tag-name
   }
 }
 
@@ -39,9 +39,9 @@ resource "aws_subnet" "public-subnet-terraform-test" {
   vpc_id            = aws_vpc.vpc-terraform-test.id
   depends_on        = [aws_vpc.vpc-terraform-test]
   availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.0/24"
   tags = {
-    Name = "public-subnet-terraform-test"
+    Name = var.aws-public-subnet-tag-name
   }
 }
 
@@ -215,7 +215,7 @@ resource "aws_eip" "public-gw-eip-terraform-test" {
 resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   # ami               = "ami-084009f26f70a7c0b"
   # instance_type     = "m5.xlarge"
-  ami               = data.aws_ami.ubuntu-20-ami-terraform-test.id
+  ami               = data.aws_ami.k8s-ami.id
   instance_type     = "t3a.medium"
   depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test, aws_network_interface.private-gw-network_interface-terraform-test]
   availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"

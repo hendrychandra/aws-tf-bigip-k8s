@@ -1,25 +1,31 @@
 
 
 
-data "aws_ami" "ubuntu-20-ami-terraform-test" {
-  most_recent = true
-  owners      = ["amazon", "099720109477"]
+data "aws_ami" "k8s-ami" {
+  most_recent = var.k8s-ami-most-recent
+  owners      = ["amazon", var.k8s-ami-owner-id]
   filter {
     name   = "architecture"
-    values = ["x86_64"]
+    values = [var.k8s-ami-architecture]
   }
   filter {
     name   = "name"
-    values = ["ubuntu/images/*"]
+    values = [var.k8s-ami-name-prefix]
   }
   filter {
     name   = "name"
-    values = ["*/ubuntu-focal-20.04-amd64-server-*"]
+    values = [var.k8s-ami-name-infix]
+  }
+  filter {
+    name   = "name"
+    values = [var.k8s-ami-name-suffix]
+    # Relation between individual-element within the array is/are OR
   }
   filter {
     name   = "virtualization-type"
-    values = ["hvm"]
+    values = [var.k8s-ami-virtualization-type]
   }
+  # Relation between individual-filter is/are AND
 }
 
 

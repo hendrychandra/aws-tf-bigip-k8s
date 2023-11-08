@@ -2,7 +2,7 @@
 
 
 output "ubuntu-20-ami" {
-  value = data.aws_ami.ubuntu-20-ami-terraform-test
+  value = data.aws_ami.k8s-ami
 }
 
 output "fqdn" {
