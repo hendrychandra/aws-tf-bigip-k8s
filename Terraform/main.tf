@@ -38,7 +38,7 @@ resource "aws_route_table" "public-route_table-terraform-test" {
 resource "aws_subnet" "public-subnet-terraform-test" {
   vpc_id            = aws_vpc.vpc-terraform-test.id
   depends_on        = [aws_vpc.vpc-terraform-test]
-  availability_zone = "ap-southeast-1a"
+  availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
   cidr_block        = "10.0.1.0/24"
   tags = {
     Name = "public-subnet-terraform-test"
@@ -64,7 +64,7 @@ resource "aws_route_table" "private-route_table-terraform-test" {
 resource "aws_subnet" "private-subnet-terraform-test" {
   vpc_id            = aws_vpc.vpc-terraform-test.id
   depends_on        = [aws_vpc.vpc-terraform-test]
-  availability_zone = "ap-southeast-1a"
+  availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
   cidr_block        = "10.0.10.0/24"
   tags = {
     Name = "private-subnet-terraform-test"
@@ -218,8 +218,8 @@ resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   ami               = data.aws_ami.ubuntu-20-ami-terraform-test.id
   instance_type     = "t3a.medium"
   depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test, aws_network_interface.private-gw-network_interface-terraform-test]
-  availability_zone = "ap-southeast-1a"
-  key_name          = "AWS_F5_Singapore_KeyPair"
+  availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
+  key_name          = var.aws-ec2-keypair-name
   network_interface {
     network_interface_id = aws_network_interface.public-gw-network_interface-terraform-test.id
     device_index         = 0
@@ -252,16 +252,12 @@ EOF
 
 
 
-data "aws_route53_zone" "parent-domain" {
-  name = "ggrks.click."
-}
-
 resource "aws_route53_record" "sub-domain" {
   depends_on = [aws_instance.gw-ubuntu-20-instance-terraform-test]
   zone_id    = data.aws_route53_zone.parent-domain.zone_id
-  name       = "demo.${data.aws_route53_zone.parent-domain.name}"
-  type       = "A"
-  ttl        = "22"
+  name       = "${var.subdomain-record-name}.${data.aws_route53_zone.parent-domain.name}"
+  type       = var.subdomain-record-type
+  ttl        = var.subdomain-record-ttl
   records    = [aws_instance.gw-ubuntu-20-instance-terraform-test.public_ip]
 }
 

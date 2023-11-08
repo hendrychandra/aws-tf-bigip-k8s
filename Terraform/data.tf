@@ -23,3 +23,9 @@ data "aws_ami" "ubuntu-20-ami-terraform-test" {
 }
 
 
+
+data "aws_route53_zone" "parent-domain" {
+  name = var.existing-aws-route53-zone
+}
+
+
