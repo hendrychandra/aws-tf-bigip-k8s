@@ -1,6 +1,37 @@
 
 
 
+# One real example: mistake in assigning IP Address and/or IP Subnet,
+# happen quite often. This activity is also meticulous activity which
+# needs higher than average attentions.
+# Therefore it is best if the script can help by adopting principle of
+# "Don't Repeat Yourself" (DRY).
+# For example: the whole VPC will have the same Prefix
+# (largest is /16). Therefore all Subnets and IP Addresses in the same
+# VPC will have the same prefix. By NOT requiring user to re-type the
+# Prefix, there are LESS chances of error.
+#
+# Since Terraform's variable canNOT be formulated from one or more
+# other variable(s), this condition pushes variable's declaration
+# below to as small-granularity as possible.
+#
+# Example: List or Map data-type contain large chunk of data at once.
+# Unless there are no possibilities/needs to:
+# (*) make data dynamically composed from other variable(s)
+# (*) consolidate some of the data which have similar pattern(s)
+# Then use a more native data-type such as string or number.
+#
+# Example: Tags can be declared as map(string).
+# But then you need to keep repeating object's name-tag with the same
+# prefix (like project name, or owner, etc. for administrative
+# purposes).
+# Worse if you need to keep specific tag for every object, like
+# owner-tag; since then every object will have the exact same static
+# owner-tag, which you need to keep repeating in the variable
+# declaration.
+
+
+
 ##########################
 # Access and Credentials #
 ##########################
@@ -180,8 +211,8 @@ variable "aws-private-route-table-tag-name" {
 
 variable "aws-public-subnet-cidr-infix" {
   description = "The third IPv4 segments of AWS Subnet CIDR Block"
-  type        = string
-  default     = "1"
+  type        = number
+  default     = 1
   # This will be combined with aws-vpc-cidr-prefix, and the rest of the CIDR Block will be: ".0/24".
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.0/24"
 }
@@ -194,8 +225,8 @@ variable "aws-public-subnet-tag-name" {
 
 variable "aws-private-subnet-cidr-infix" {
   description = "The third IPv4 segments of AWS Subnet CIDR Block"
-  type        = string
-  default     = "10"
+  type        = number
+  default     = 10
   # This will be combined with aws-vpc-cidr-prefix, and the rest of the CIDR Block will be: ".0/24".
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.0/24"
 }
@@ -204,6 +235,77 @@ variable "aws-private-subnet-tag-name" {
   description = "Name Tag of AWS Private Subnet"
   type        = string
   default     = "aws-private-subnet-tag-name"
+}
+
+
+
+#########################
+# AWS Network Interface #
+#########################
+
+variable "aws-network-interface-k8s-master1-public-subnet-source-dest-check" {
+  description = "Source Destination Check value of AWS Network Interface for K8s Master1 node on the Public Subnet"
+  type        = bool
+  default     = false
+}
+
+variable "aws-network-interface-k8s-master1-public-subnet-private-ip1" {
+  description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
+  type        = number
+  default     = 123
+  # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
+}
+
+variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
+  description = "Tags of AWS Network Interface for K8s Master1 node on the Public Subnet"
+  type        = string
+  default     = "aws-network-interface-k8s-master1-public-subnet-tag-name"
+}
+
+
+
+
+
+
+
+
+
+######################
+# AWS Security Group #
+######################
+
+variable "aws-security-group-ingress-any" {
+  description = "Any IPv4 Ingress Rule for AWS Security Group"
+  type = list(object({
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
+    ipv6_cidr_blocks = list(string)
+    self             = bool
+  }))
+  default = [{
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    self             = true
+  }]
+}
+
+
+
+variable "aws-security-group-egress-any" {
+  description = "Any IPv4 Egress Rule for AWS Security Group"
+  default = {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 }
 
 

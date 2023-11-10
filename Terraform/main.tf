@@ -140,13 +140,27 @@ resource "aws_security_group" "private-security_group-terraform-test" {
   description = "Allow ALL"
   vpc_id      = aws_vpc.vpc-terraform-test.id
   depends_on  = [aws_vpc.vpc-terraform-test]
-  ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+
+  dynamic "ingress" {
+    for_each = var.aws-security-group-ingress-any
+    content {
+      description      = "Allow Port ${ingress.value.from_port} to ${ingress.value.to_port} from ${join(",", ingress.value.cidr_blocks)} or ${join(",", ingress.value.ipv6_cidr_blocks)} on protocol ${ingress.value.protocol}"
+      from_port        = ingress.value.from_port
+      to_port          = ingress.value.to_port
+      protocol         = ingress.value.protocol
+      cidr_blocks      = ingress.value.cidr_blocks
+      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
+      self             = ingress.value.self
+    }
   }
+
+  # ingress {
+  #   from_port        = 0
+  #   to_port          = 0
+  #   protocol         = "-1"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
   egress {
     from_port        = 0
     to_port          = 0
@@ -163,12 +177,12 @@ resource "aws_security_group" "private-security_group-terraform-test" {
 
 resource "aws_network_interface" "public-gw-network_interface-terraform-test" {
   subnet_id         = aws_subnet.public-subnet-terraform-test.id
-  source_dest_check = false
-  private_ips       = ["10.0.1.123"]
+  source_dest_check = var.aws-network-interface-k8s-master1-public-subnet-source-dest-check
+  private_ips       = ["${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"]
   security_groups   = [aws_security_group.public-security_group-terraform-test.id]
   depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.public-subnet-terraform-test, aws_security_group.public-security_group-terraform-test]
   tags = {
-    Name = "public-gw-network_interface-terraform-test"
+    Name = var.aws-network-interface-k8s-master1-public-subnet-tag-name
   }
 }
 
