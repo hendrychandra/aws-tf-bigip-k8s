@@ -275,9 +275,10 @@ variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
 # AWS Security Group #
 ######################
 
-variable "aws-security-group-ingress-any" {
-  description = "Any IPv4 Ingress Rule for AWS Security Group"
+variable "aws-security-group-ingress-k8s" {
+  description = "K8s Ingress Rule for AWS Security Group"
   type = list(object({
+    description      = string
     from_port        = number
     to_port          = number
     protocol         = string
@@ -286,6 +287,63 @@ variable "aws-security-group-ingress-any" {
     self             = bool
   }))
   default = [{
+    description      = "Allow InComing SSH :"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    self             = true
+    }, {
+    description      = "Allow InComing HTTP :"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    self             = true
+    }, {
+    description      = "Allow InComing TLS :"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    self             = true
+    }, {
+    description      = "Allow InComing K8s NodePorts :"
+    from_port        = 30000
+    to_port          = 32767
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+    self             = true
+    }, {
+    description      = "Allow InComing :"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["127.0.0.0/8"]
+    ipv6_cidr_blocks = ["::1/128"]
+    self             = true
+  }]
+}
+
+
+
+variable "aws-security-group-ingress-any" {
+  description = "Any Ingress Rule for AWS Security Group"
+  type = list(object({
+    description      = string
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
+    ipv6_cidr_blocks = list(string)
+    self             = bool
+  }))
+  default = [{
+    description      = "Allow InComing Any :"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
@@ -295,17 +353,26 @@ variable "aws-security-group-ingress-any" {
   }]
 }
 
-
-
 variable "aws-security-group-egress-any" {
-  description = "Any IPv4 Egress Rule for AWS Security Group"
-  default = {
+  description = "Any Egress Rule for AWS Security Group"
+  type = list(object({
+    description      = string
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = list(string)
+    ipv6_cidr_blocks = list(string)
+    self             = bool
+  }))
+  default = [{
+    description      = "Allow OutGoing Any :"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-  }
+    self             = true
+  }]
 }
 
 

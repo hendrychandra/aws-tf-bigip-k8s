@@ -84,51 +84,29 @@ resource "aws_security_group" "public-security_group-terraform-test" {
   description = "Allow TLS Inbound Traffic"
   vpc_id      = aws_vpc.vpc-terraform-test.id
   depends_on  = [aws_vpc.vpc-terraform-test]
-  ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+  dynamic "ingress" {
+    for_each = var.aws-security-group-ingress-k8s
+    content {
+      description      = "${ingress.value.description} Port ${ingress.value.from_port} to ${ingress.value.to_port} from ${join(",", ingress.value.cidr_blocks)} or ${join(",", ingress.value.ipv6_cidr_blocks)} on protocol ${ingress.value.protocol}"
+      from_port        = ingress.value.from_port
+      to_port          = ingress.value.to_port
+      protocol         = ingress.value.protocol
+      cidr_blocks      = ingress.value.cidr_blocks
+      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
+      self             = ingress.value.self
+    }
   }
-  ingress {
-    description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  ingress {
-    description      = "TLS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  ingress {
-    description      = "K8s NodePorts"
-    from_port        = 30000
-    to_port          = 32767
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [aws_vpc.vpc-terraform-test.cidr_block, "127.0.0.0/24"]
-    # ipv6_cidr_blocks = [aws_vpc.vpc-terraform-test.ipv6_cidr_block]
-  }
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+  dynamic "egress" {
+    for_each = var.aws-security-group-egress-any
+    content {
+      description      = "${egress.value.description} Port ${egress.value.from_port} to ${egress.value.to_port} from ${join(",", egress.value.cidr_blocks)} or ${join(",", egress.value.ipv6_cidr_blocks)} on protocol ${egress.value.protocol}"
+      from_port        = egress.value.from_port
+      to_port          = egress.value.to_port
+      protocol         = egress.value.protocol
+      cidr_blocks      = egress.value.cidr_blocks
+      ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
+      self             = egress.value.self
+    }
   }
   tags = {
     Name = "public-security_group-terraform-test"
@@ -140,11 +118,10 @@ resource "aws_security_group" "private-security_group-terraform-test" {
   description = "Allow ALL"
   vpc_id      = aws_vpc.vpc-terraform-test.id
   depends_on  = [aws_vpc.vpc-terraform-test]
-
   dynamic "ingress" {
     for_each = var.aws-security-group-ingress-any
     content {
-      description      = "Allow Port ${ingress.value.from_port} to ${ingress.value.to_port} from ${join(",", ingress.value.cidr_blocks)} or ${join(",", ingress.value.ipv6_cidr_blocks)} on protocol ${ingress.value.protocol}"
+      description      = "${ingress.value.description} Port ${ingress.value.from_port} to ${ingress.value.to_port} from ${join(",", ingress.value.cidr_blocks)} or ${join(",", ingress.value.ipv6_cidr_blocks)} on protocol ${ingress.value.protocol}"
       from_port        = ingress.value.from_port
       to_port          = ingress.value.to_port
       protocol         = ingress.value.protocol
@@ -153,20 +130,17 @@ resource "aws_security_group" "private-security_group-terraform-test" {
       self             = ingress.value.self
     }
   }
-
-  # ingress {
-  #   from_port        = 0
-  #   to_port          = 0
-  #   protocol         = "-1"
-  #   cidr_blocks      = ["0.0.0.0/0"]
-  #   ipv6_cidr_blocks = ["::/0"]
-  # }
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+  dynamic "egress" {
+    for_each = var.aws-security-group-egress-any
+    content {
+      description      = "${egress.value.description} Port ${egress.value.from_port} to ${egress.value.to_port} from ${join(",", egress.value.cidr_blocks)} or ${join(",", egress.value.ipv6_cidr_blocks)} on protocol ${egress.value.protocol}"
+      from_port        = egress.value.from_port
+      to_port          = egress.value.to_port
+      protocol         = egress.value.protocol
+      cidr_blocks      = egress.value.cidr_blocks
+      ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
+      self             = egress.value.self
+    }
   }
   tags = {
     Name = "private-security_group-terraform-test"
