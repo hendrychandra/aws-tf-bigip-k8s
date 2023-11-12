@@ -262,7 +262,7 @@ variable "aws-network-interface-k8s-master1-public-subnet-private-ip1" {
 }
 
 variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
-  description = "Tags of AWS Network Interface for K8s Master1 node on the Public Subnet"
+  description = "Name Tag for AWS Network Interface for K8s Master1 node on the Public Subnet"
   type        = string
   default     = "aws-network-interface-k8s-master1-public-subnet-tag-name"
 }
@@ -278,6 +278,24 @@ variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
 ######################
 # AWS Security Group #
 ######################
+
+variable "aws-public-security-group-name" {
+  description = "Name for Public Security Group"
+  type        = string
+  default     = "public-security-group-name"
+}
+
+variable "aws-public-security-group-tag-name" {
+  description = "Name Tag for Public Security Group"
+  type        = string
+  default     = "public-security-group-tag-name"
+}
+
+variable "aws-public-security-group-description" {
+  description = "Description for Public Security Group"
+  type        = string
+  default     = "Allow K8s and Administrative Traffic"
+}
 
 variable "aws-security-group-ingress-k8s" {
   description = "K8s Ingress Rule for AWS Security Group"
@@ -334,6 +352,26 @@ variable "aws-security-group-ingress-k8s" {
 }
 
 
+
+variable "aws-private-security-group-name" {
+  # The 'Name' property is NOT the default first column on AWS Dashboard/Portal/UI
+  description = "Name for Private Security Group"
+  type        = string
+  default     = "private-security-group-name"
+}
+
+variable "aws-private-security-group-tag-name" {
+  # The default first column on AWS Dashboard/Portal/UI is Name Tag
+  description = "Name Tag for Private Security Group"
+  type        = string
+  default     = "private-security-group-tag-name"
+}
+
+variable "aws-private-security-group-description" {
+  description = "Description for Private Security Group"
+  type        = string
+  default     = "Allow All Traffic"
+}
 
 variable "aws-security-group-ingress-any" {
   description = "Any Ingress Rule for AWS Security Group"

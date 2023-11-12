@@ -80,8 +80,8 @@ resource "aws_route_table_association" "private-route_table_association-terrafor
 
 
 resource "aws_security_group" "public-security_group-terraform-test" {
-  name        = "public-security_group-terraform-test"
-  description = "Allow TLS Inbound Traffic"
+  name        = var.aws-public-security-group-name
+  description = var.aws-public-security-group-description
   vpc_id      = aws_vpc.vpc-terraform-test.id
   depends_on  = [aws_vpc.vpc-terraform-test]
   dynamic "ingress" {
@@ -109,13 +109,13 @@ resource "aws_security_group" "public-security_group-terraform-test" {
     }
   }
   tags = {
-    Name = "public-security_group-terraform-test"
+    Name = var.aws-public-security-group-tag-name
   }
 }
 
 resource "aws_security_group" "private-security_group-terraform-test" {
-  name        = "private-security_group-terraform-test"
-  description = "Allow ALL"
+  name        = var.aws-private-security-group-name
+  description = var.aws-private-security-group-description
   vpc_id      = aws_vpc.vpc-terraform-test.id
   depends_on  = [aws_vpc.vpc-terraform-test]
   dynamic "ingress" {
@@ -143,7 +143,7 @@ resource "aws_security_group" "private-security_group-terraform-test" {
     }
   }
   tags = {
-    Name = "private-security_group-terraform-test"
+    Name = var.aws-private-security-group-tag-name
   }
 }
 
@@ -185,7 +185,7 @@ resource "aws_network_interface" "private-server-network_interface-terraform-tes
 resource "aws_eip" "public-gw-eip-terraform-test" {
   domain                    = "vpc"
   network_interface         = aws_network_interface.public-gw-network_interface-terraform-test.id
-  associate_with_private_ip = "10.0.1.123"
+  associate_with_private_ip = "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
   depends_on                = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test]
   tags = {
     Name = "public-gw-eip-terraform-test"
