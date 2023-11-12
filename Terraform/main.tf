@@ -162,12 +162,12 @@ resource "aws_network_interface" "public-gw-network-interface-terraform-test" {
 
 resource "aws_network_interface" "private-gw-network-interface-terraform-test" {
   subnet_id         = aws_subnet.private-subnet-terraform-test.id
-  source_dest_check = false
-  private_ips       = ["10.0.10.123"]
+  source_dest_check = var.aws-network-interface-k8s-master1-private-subnet-source-dest-check
+  private_ips       = ["${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ip1}"]
   security_groups   = [aws_security_group.private-security_group-terraform-test.id]
   depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security_group-terraform-test]
   tags = {
-    Name = "private-gw-network-interface-terraform-test"
+    Name = var.aws-network-interface-k8s-master1-private-subnet-tag-name
   }
 }
 

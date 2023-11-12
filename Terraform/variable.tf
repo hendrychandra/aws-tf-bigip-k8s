@@ -275,6 +275,28 @@ variable "aws-eip-k8s-master1-public-subnet-private-ip1-tag-name" {
 
 
 
+variable "aws-network-interface-k8s-master1-private-subnet-source-dest-check" {
+  description = "Source Destination Check value of AWS Network Interface for K8s Master1 node on the Private Subnet"
+  type        = bool
+  default     = false
+}
+
+variable "aws-network-interface-k8s-master1-private-subnet-private-ip1" {
+  description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Private Subnet"
+  type        = number
+  default     = 123
+  # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ip1}"
+}
+
+variable "aws-network-interface-k8s-master1-private-subnet-tag-name" {
+  description = "Name Tag for AWS Network Interface for K8s Master1 node on the Private Subnet"
+  type        = string
+  default     = "aws-network-interface-k8s-master1-private-subnet-tag-name"
+}
+
+
+
 
 
 
