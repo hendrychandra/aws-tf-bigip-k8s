@@ -10,6 +10,9 @@
 # (largest is /16). Therefore all Subnets and IP Addresses in the same
 # VPC will have the same prefix. By NOT requiring user to re-type the
 # Prefix, there are LESS chances of error.
+# Example using DRY principle, an IP Address will be composed of VPC
+# Prefix, Subnet and the individual IP parts, such as:
+# "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
 #
 # Since Terraform's variable canNOT be formulated from one or more
 # other variable(s), this condition pushes variable's declaration
@@ -91,6 +94,7 @@ variable "aws-availability-zone-suffix" {
   description = "AWS Availability Zone Suffix"
   type        = string
   default     = "c"
+  # The availability zone will be: "${var.aws-region}${var.aws-availability-zone-suffix}"
 }
 
 
