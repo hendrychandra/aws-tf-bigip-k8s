@@ -267,6 +267,12 @@ variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
   default     = "aws-network-interface-k8s-master1-public-subnet-tag-name"
 }
 
+variable "aws-eip-k8s-master1-public-subnet-private-ip1-tag-name" {
+  description = "Name Tag for AWS EIP for K8s Master1 node on the Public Subnet for Private IP1"
+  type        = string
+  default     = "aws-eip-k8s-master1-public-subnet-private-ip1-tag-name"
+}
+
 
 
 

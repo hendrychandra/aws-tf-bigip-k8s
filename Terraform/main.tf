@@ -149,7 +149,7 @@ resource "aws_security_group" "private-security_group-terraform-test" {
 
 
 
-resource "aws_network_interface" "public-gw-network_interface-terraform-test" {
+resource "aws_network_interface" "public-gw-network-interface-terraform-test" {
   subnet_id         = aws_subnet.public-subnet-terraform-test.id
   source_dest_check = var.aws-network-interface-k8s-master1-public-subnet-source-dest-check
   private_ips       = ["${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"]
@@ -160,35 +160,35 @@ resource "aws_network_interface" "public-gw-network_interface-terraform-test" {
   }
 }
 
-resource "aws_network_interface" "private-gw-network_interface-terraform-test" {
+resource "aws_network_interface" "private-gw-network-interface-terraform-test" {
   subnet_id         = aws_subnet.private-subnet-terraform-test.id
   source_dest_check = false
   private_ips       = ["10.0.10.123"]
   security_groups   = [aws_security_group.private-security_group-terraform-test.id]
   depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security_group-terraform-test]
   tags = {
-    Name = "private-gw-network_interface-terraform-test"
+    Name = "private-gw-network-interface-terraform-test"
   }
 }
 
-resource "aws_network_interface" "private-server-network_interface-terraform-test" {
+resource "aws_network_interface" "private-server-network-interface-terraform-test" {
   subnet_id         = aws_subnet.private-subnet-terraform-test.id
   source_dest_check = false
   private_ips       = ["10.0.10.222"]
   security_groups   = [aws_security_group.private-security_group-terraform-test.id]
   depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security_group-terraform-test]
   tags = {
-    Name = "private-server-network_interface-terraform-test"
+    Name = "private-server-network-interface-terraform-test"
   }
 }
 
 resource "aws_eip" "public-gw-eip-terraform-test" {
   domain                    = "vpc"
-  network_interface         = aws_network_interface.public-gw-network_interface-terraform-test.id
+  network_interface         = aws_network_interface.public-gw-network-interface-terraform-test.id
   associate_with_private_ip = "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
-  depends_on                = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test]
+  depends_on                = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network-interface-terraform-test]
   tags = {
-    Name = "public-gw-eip-terraform-test"
+    Name = var.aws-eip-k8s-master1-public-subnet-private-ip1-tag-name
   }
 }
 
@@ -203,15 +203,15 @@ resource "aws_eip" "public-gw-eip-terraform-test" {
 resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   ami               = data.aws_ami.k8s-ami.id
   instance_type     = var.k8s-master1-instance-type
-  depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network_interface-terraform-test, aws_network_interface.private-gw-network_interface-terraform-test]
+  depends_on        = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network-interface-terraform-test, aws_network_interface.private-gw-network-interface-terraform-test]
   availability_zone = "${var.aws-region}${var.aws-availability-zone-suffix}"
   key_name          = var.aws-ec2-keypair-name
   network_interface {
-    network_interface_id = aws_network_interface.public-gw-network_interface-terraform-test.id
+    network_interface_id = aws_network_interface.public-gw-network-interface-terraform-test.id
     device_index         = 0
   }
   network_interface {
-    network_interface_id = aws_network_interface.private-gw-network_interface-terraform-test.id
+    network_interface_id = aws_network_interface.private-gw-network-interface-terraform-test.id
     device_index         = 1
   }
   root_block_device {
