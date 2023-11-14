@@ -79,7 +79,7 @@ resource "aws_route_table_association" "private-route_table_association-terrafor
 
 
 
-resource "aws_security_group" "public-security_group-terraform-test" {
+resource "aws_security_group" "public-security-group-terraform-test" {
   name        = var.aws-public-security-group-name
   description = var.aws-public-security-group-description
   vpc_id      = aws_vpc.vpc-terraform-test.id
@@ -113,7 +113,7 @@ resource "aws_security_group" "public-security_group-terraform-test" {
   }
 }
 
-resource "aws_security_group" "private-security_group-terraform-test" {
+resource "aws_security_group" "private-security-group-terraform-test" {
   name        = var.aws-private-security-group-name
   description = var.aws-private-security-group-description
   vpc_id      = aws_vpc.vpc-terraform-test.id
@@ -152,9 +152,9 @@ resource "aws_security_group" "private-security_group-terraform-test" {
 resource "aws_network_interface" "public-gw-network-interface-terraform-test" {
   subnet_id         = aws_subnet.public-subnet-terraform-test.id
   source_dest_check = var.aws-network-interface-k8s-master1-public-subnet-source-dest-check
-  private_ips       = ["${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"]
-  security_groups   = [aws_security_group.public-security_group-terraform-test.id]
-  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.public-subnet-terraform-test, aws_security_group.public-security_group-terraform-test]
+  private_ips       = [for ip-address-segment in var.aws-network-interface-k8s-master1-public-subnet-private-ips : "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${ip-address-segment}"]
+  security_groups   = [aws_security_group.public-security-group-terraform-test.id]
+  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.public-subnet-terraform-test, aws_security_group.public-security-group-terraform-test]
   tags = {
     Name = var.aws-network-interface-k8s-master1-public-subnet-tag-name
   }
@@ -163,9 +163,9 @@ resource "aws_network_interface" "public-gw-network-interface-terraform-test" {
 resource "aws_network_interface" "private-gw-network-interface-terraform-test" {
   subnet_id         = aws_subnet.private-subnet-terraform-test.id
   source_dest_check = var.aws-network-interface-k8s-master1-private-subnet-source-dest-check
-  private_ips       = ["${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ip1}"]
-  security_groups   = [aws_security_group.private-security_group-terraform-test.id]
-  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security_group-terraform-test]
+  private_ips       = [for ip-address-segment in var.aws-network-interface-k8s-master1-private-subnet-private-ips : "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${ip-address-segment}"]
+  security_groups   = [aws_security_group.private-security-group-terraform-test.id]
+  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security-group-terraform-test]
   tags = {
     Name = var.aws-network-interface-k8s-master1-private-subnet-tag-name
   }
@@ -173,22 +173,23 @@ resource "aws_network_interface" "private-gw-network-interface-terraform-test" {
 
 resource "aws_network_interface" "private-server-network-interface-terraform-test" {
   subnet_id         = aws_subnet.private-subnet-terraform-test.id
-  source_dest_check = false
-  private_ips       = ["10.0.10.222"]
-  security_groups   = [aws_security_group.private-security_group-terraform-test.id]
-  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security_group-terraform-test]
+  source_dest_check = var.aws-network-interface-server1-private-subnet-source-dest-check
+  private_ips       = [for ip-address-segment in var.aws-network-interface-server1-private-subnet-private-ips : "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${ip-address-segment}"]
+  security_groups   = [aws_security_group.private-security-group-terraform-test.id]
+  depends_on        = [aws_vpc.vpc-terraform-test, aws_subnet.private-subnet-terraform-test, aws_security_group.private-security-group-terraform-test]
   tags = {
-    Name = "private-server-network-interface-terraform-test"
+    Name = var.aws-network-interface-server1-private-subnet-tag-name
   }
 }
 
 resource "aws_eip" "public-gw-eip-terraform-test" {
+  for_each                  = toset([for ip-address-segment in var.aws-network-interface-k8s-master1-public-subnet-private-ips : tostring(ip-address-segment)])
   domain                    = "vpc"
   network_interface         = aws_network_interface.public-gw-network-interface-terraform-test.id
-  associate_with_private_ip = "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
+  associate_with_private_ip = "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${each.value}"
   depends_on                = [aws_vpc.vpc-terraform-test, aws_network_interface.public-gw-network-interface-terraform-test]
   tags = {
-    Name = var.aws-eip-k8s-master1-public-subnet-private-ip1-tag-name
+    Name = var.aws-eip-k8s-master1-public-subnet-tag-name
   }
 }
 
@@ -239,12 +240,13 @@ EOF
 
 
 resource "aws_route53_record" "sub-domain" {
+  for_each   = var.aws-network-interface-k8s-master1-public-subnet-private-ips
   depends_on = [aws_instance.gw-ubuntu-20-instance-terraform-test]
   zone_id    = data.aws_route53_zone.parent-domain.zone_id
-  name       = "${var.subdomain-record-name}.${data.aws_route53_zone.parent-domain.name}"
+  name       = "${each.key}.${data.aws_route53_zone.parent-domain.name}"
   type       = var.subdomain-record-type
   ttl        = var.subdomain-record-ttl
-  records    = [aws_instance.gw-ubuntu-20-instance-terraform-test.public_ip]
+  records    = [aws_eip.public-gw-eip-terraform-test[each.value].public_ip]
 }
 
 

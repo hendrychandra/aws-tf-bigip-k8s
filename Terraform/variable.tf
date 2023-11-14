@@ -60,12 +60,6 @@ variable "existing-aws-route53-zone" {
   type        = string
 }
 
-variable "subdomain-record-name" {
-  description = "Subdomain Record Name of the AWS Route53 DNS Zone"
-  type        = string
-  default     = "demo"
-}
-
 variable "subdomain-record-type" {
   description = "Subdomain Record Type of the selected Subdomain Record Name"
   type        = string
@@ -253,24 +247,29 @@ variable "aws-network-interface-k8s-master1-public-subnet-source-dest-check" {
   default     = false
 }
 
-variable "aws-network-interface-k8s-master1-public-subnet-private-ip1" {
-  description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
-  type        = number
-  default     = 123
-  # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
-  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
-}
-
 variable "aws-network-interface-k8s-master1-public-subnet-tag-name" {
   description = "Name Tag for AWS Network Interface for K8s Master1 node on the Public Subnet"
   type        = string
   default     = "aws-network-interface-k8s-master1-public-subnet-tag-name"
 }
 
-variable "aws-eip-k8s-master1-public-subnet-private-ip1-tag-name" {
-  description = "Name Tag for AWS EIP for K8s Master1 node on the Public Subnet for Private IP1"
+variable "aws-network-interface-k8s-master1-public-subnet-private-ips" {
+  description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
+  # type        = map(number)
+  default = {
+    "display"    = 111
+    "exhibit"    = 123
+    "illustrate" = 222
+    "show"       = 234
+  }
+  # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
+}
+
+variable "aws-eip-k8s-master1-public-subnet-tag-name" {
+  description = "Name Tag for AWS EIP for K8s Master1 node on the Public Subnet"
   type        = string
-  default     = "aws-eip-k8s-master1-public-subnet-private-ip1-tag-name"
+  default     = "aws-eip-k8s-master1-public-subnet-tag-name"
 }
 
 
@@ -281,10 +280,10 @@ variable "aws-network-interface-k8s-master1-private-subnet-source-dest-check" {
   default     = false
 }
 
-variable "aws-network-interface-k8s-master1-private-subnet-private-ip1" {
+variable "aws-network-interface-k8s-master1-private-subnet-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Private Subnet"
-  type        = number
-  default     = 123
+  type        = list(number)
+  default     = [111, 123]
   # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ip1}"
 }
@@ -293,6 +292,28 @@ variable "aws-network-interface-k8s-master1-private-subnet-tag-name" {
   description = "Name Tag for AWS Network Interface for K8s Master1 node on the Private Subnet"
   type        = string
   default     = "aws-network-interface-k8s-master1-private-subnet-tag-name"
+}
+
+
+
+variable "aws-network-interface-server1-private-subnet-source-dest-check" {
+  description = "Source Destination Check value of AWS Network Interface for Server1 node on the Private Subnet"
+  type        = bool
+  default     = false
+}
+
+variable "aws-network-interface-server1-private-subnet-private-ips" {
+  description = "The Last Segment of IPv4 of AWS Network Interface for Server1 node on the Private Subnet"
+  type        = list(number)
+  default     = [222, 234]
+  # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-server1-private-subnet-private-ips}"
+}
+
+variable "aws-network-interface-server1-private-subnet-tag-name" {
+  description = "Name Tag for AWS Network Interface for Server1 node on the Private Subnet"
+  type        = string
+  default     = "aws-network-interface-server1-private-subnet-tag-name"
 }
 
 
@@ -486,6 +507,9 @@ variable "k8s-master1-instance-root-block-device-tag-name" {
   type        = string
   default     = "k8s-master1-instance-root-block-device-tag-name"
 }
+
+
+
 
 
 
