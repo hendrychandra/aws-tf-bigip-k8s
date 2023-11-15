@@ -15,20 +15,21 @@ cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendr
 #
 # No defaults can be defined within this bash scripts alone.
 
-if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ] ; then
+Prefix=$1
+MasterOffset=$2
+NumberOfMaster=$3
+WorkerOffset=$4
+NumberOfWorker=$5
+
+if [ -z "$Prefix" ] || [ -z "$MasterOffset" ] || [ -z "$NumberOfMaster" ] || [ -z "$WorkerOffset" ] || [ -z "$NumberOfWorker" ] ; then
  echo "`date +%Y%m%d%H%M%S` One or more Argument(s) missing. Consider there is No Argument given. Nothing to Do."
 else
  echo "`date +%Y%m%d%H%M%S` All Arguments exist (NOT necessarily correct). Let's try to do this."
- set Prefix = $1
- set MasterOffset = $2
- set NumberOfMaster = $3
- set WorkerOffset = $4
- set NumberOfWorker = $5
  for counter in $(seq 1 $NumberOfMaster) ; do
-  echo "$Prefix.$((MasterOffset+counter-1)) $MasterNodeNamePrefix" | sudo tee --append /etc/hosts
+  echo "$Prefix.$((MasterOffset+counter-1)) $MasterNodeNamePrefix$counter" | sudo tee --append /etc/hosts
  done
  for counter in $(seq 1 $NumberOfWorker) ; do
-  echo "$Prefix.$((WorkerOffset+counter-1)) $WorkerNodeNamePrefix" | sudo tee --append /etc/hosts
+  echo "$Prefix.$((WorkerOffset+counter-1)) $WorkerNodeNamePrefix$counter" | sudo tee --append /etc/hosts
  done
 fi
 
