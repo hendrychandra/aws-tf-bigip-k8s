@@ -263,7 +263,7 @@ variable "aws-network-interface-k8s-master1-public-subnet-private-ips" {
     "show"       = 234
   }
   # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
-  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ip1}"
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-public-subnet-private-ips}"
 }
 
 variable "aws-eip-k8s-master1-public-subnet-tag-name" {
@@ -285,7 +285,7 @@ variable "aws-network-interface-k8s-master1-private-subnet-private-ips" {
   type        = list(number)
   default     = [111, 123]
   # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
-  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ip1}"
+  # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.aws-network-interface-k8s-master1-private-subnet-private-ips}"
 }
 
 variable "aws-network-interface-k8s-master1-private-subnet-tag-name" {

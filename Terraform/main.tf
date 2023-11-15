@@ -224,7 +224,11 @@ resource "aws_instance" "gw-ubuntu-20-instance-terraform-test" {
   }
   user_data = <<EOF
 #!/bin/bash
-cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapSingleNodeClusterApplicationService.sh;sudo chmod 777 /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh'
+
+cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMPrepOS.sh;sudo chmod 777 /home/ubuntu/VMPrepOS.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMPrepOS.sh;runuser -l ubuntu -c '/home/ubuntu/VMPrepOS.sh ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix} ${var.aws-network-interface-k8s-master1-public-subnet-private-ips.display} 1 ${var.aws-network-interface-k8s-master1-private-subnet-private-ips[0]} 9'
+
+# cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapSingleNodeClusterApplicationService.sh;sudo chmod 777 /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh'
+
 EOF
   tags = {
     Name = var.k8s-master1-instance-tag-name
