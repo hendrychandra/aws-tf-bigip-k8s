@@ -119,7 +119,7 @@ variable "k8s-master-public-network-interface-tag-name" {
 
 variable "k8s-master-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
-  # type        = map(number)
+  type        = map(number)
   default = {
     "display"    = 111
     "exhibit"    = 123

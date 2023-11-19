@@ -61,20 +61,6 @@ variable "aws-private-route-table-tag-name" {
   default     = "aws-private-route-table-tag-name"
 }
 
-#######################################################################################################
-# To Do :                                                                                             #
-# Add Network ACLs                                                                                    #
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl             #
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule        #
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_association #
-#######################################################################################################
-
-
-
-
-
-
-
 
 
 ##############
@@ -107,6 +93,58 @@ variable "aws-private-subnet-tag-name" {
   description = "Name Tag of AWS Private Subnet"
   type        = string
   default     = "aws-private-subnet-tag-name"
+}
+
+
+
+###################
+# AWS Network ACL #
+###################
+
+# Reference :
+# https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html   (search for "Network ACL")
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-networkaclentry.html
+
+variable "aws-network-acl-xgress" {
+  description = "Side Attributes of AWS Network ACL"
+  type = object({
+    rule_no   = number
+    action    = string
+    protocol  = string
+    from_port = number
+    to_port   = number
+  })
+  default = {
+    rule_no   = 100
+    action    = "allow"
+    protocol  = "-1"
+    from_port = 0
+    to_port   = 0
+  }
+}
+
+variable "aws-network-acl-xgress-rule-no-ipv6-offset" {
+  description = "rule_no Offset for IPv6 CIDR Block of Network ACL"
+  type        = number
+  default     = 500
+}
+
+variable "aws-public-network-acl-xgress-cidr-block" {
+  description = "CIDR Block of Network ACL of Public Subnet"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "aws-public-network-acl-xgress-ipv6-cidr-block" {
+  description = "IPv6 CIDR Block of Network ACL of Public Subnet"
+  type        = list(string)
+  default     = ["::/0"]
+}
+
+variable "aws-public-network-acl-tag-name" {
+  description = "Tag Name of Network ACL of Public Subnet"
+  type        = string
+  default     = "aws-public-network-acl-tag-name"
 }
 
 
