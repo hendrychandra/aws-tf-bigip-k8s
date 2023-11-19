@@ -79,12 +79,6 @@ resource "aws_route_table_association" "tf-private-route-table-association" {
 
 
 
-
-
-
-
-
-
 resource "aws_network_acl" "tf-public-network-acl" {
   vpc_id     = aws_vpc.tf-vpc.id
   subnet_ids = [aws_subnet.tf-public-subnet.id]
