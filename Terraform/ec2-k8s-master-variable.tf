@@ -43,22 +43,6 @@ variable "k8s-master-public-security-group-ingress" {
     ipv6_cidr_blocks = ["::/0"]
     self             = true
     }, {
-    description      = "Allow InComing HTTP :"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    self             = true
-    }, {
-    description      = "Allow InComing TLS :"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    self             = true
-    }, {
     description      = "Allow InComing K8s NodePorts :"
     from_port        = 30000
     to_port          = 32767
@@ -121,10 +105,7 @@ variable "k8s-master-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
   type        = map(number)
   default = {
-    "display"    = 111
-    "exhibit"    = 123
-    "illustrate" = 222
-    "show"       = 234
+    "demo" = 11
   }
   # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.k8s-master-public-network-interface-private-ips}"
@@ -141,7 +122,7 @@ variable "k8s-master-private-network-interface-source-dest-check" {
 variable "k8s-master-private-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Private Subnet"
   type        = list(number)
-  default     = [111, 123]
+  default     = [11]
   # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.k8s-master-private-network-interface-private-ips}"
 }

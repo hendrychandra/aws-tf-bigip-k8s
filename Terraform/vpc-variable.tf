@@ -8,7 +8,7 @@
 variable "aws-vpc-cidr-prefix" {
   description = "The first two IPv4 segments of AWS VPS CIDR Block"
   type        = string
-  default     = "10.0"
+  default     = "192.168"
   # The rest of the CIDR Block will be: ".0.0/16".
   # Such as: "${var.aws-vpc-cidr-prefix}.0.0/16"
 }
@@ -70,7 +70,7 @@ variable "aws-private-route-table-tag-name" {
 variable "aws-public-subnet-cidr-infix" {
   description = "The third IPv4 segments of AWS Subnet CIDR Block"
   type        = number
-  default     = 1
+  default     = 101
   # This will be combined with aws-vpc-cidr-prefix, and the rest of the CIDR Block will be: ".0/24".
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.0/24"
 }
@@ -84,7 +84,7 @@ variable "aws-public-subnet-tag-name" {
 variable "aws-private-subnet-cidr-infix" {
   description = "The third IPv4 segments of AWS Subnet CIDR Block"
   type        = number
-  default     = 10
+  default     = 123
   # This will be combined with aws-vpc-cidr-prefix, and the rest of the CIDR Block will be: ".0/24".
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.0/24"
 }
