@@ -79,6 +79,12 @@ variable "k8s-worker-public-network-interface-tag-name" {
   default     = "k8s-worker-public-network-interface-tag-name"
 }
 
+# Only one IP Address is supported per K8s Worker Node,
+# each with its own Domain Name.
+# So the number of IP Addresses below represent the number of
+# K8s Worker Nodes. Only 0 (zero) up to 9 (nine) K8s Worker Nodes are
+# supported in this template implementation.
+
 variable "k8s-worker-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s worker1 node on the Public Subnet"
   type        = map(number)

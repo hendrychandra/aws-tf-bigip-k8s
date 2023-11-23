@@ -101,11 +101,16 @@ variable "k8s-master-public-network-interface-tag-name" {
   default     = "k8s-master-public-network-interface-tag-name"
 }
 
+# Only ONE K8s Master Node supported in this template implementation.
+# You can assign multiple IP Addresses to the K8s Master Node,
+# each with its own Domain Name.
+
 variable "k8s-master-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
   type        = map(number)
   default = {
     "demo" = 11
+    "show" = 12
   }
   # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.k8s-master-public-network-interface-private-ips}"
@@ -122,7 +127,7 @@ variable "k8s-master-private-network-interface-source-dest-check" {
 variable "k8s-master-private-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Private Subnet"
   type        = list(number)
-  default     = [11]
+  default     = [11, 12]
   # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.k8s-master-private-network-interface-private-ips}"
 }

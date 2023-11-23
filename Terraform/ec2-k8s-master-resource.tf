@@ -137,7 +137,7 @@ resource "aws_instance" "tf-k8s-master-instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapSingleNodeClusterApplicationService.sh;sudo chmod 777 /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapSingleNodeClusterApplicationService.sh'
+cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapMaster.sh;sudo chmod 777 /home/ubuntu/VMWrapMaster.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapMaster.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapMaster.sh ${[for ip-address-segment in var.k8s-master-public-network-interface-private-ips : ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.tostring(ip-address-segment)] [for ip-address-segment in var.k8s-worker-public-network-interface-private-ips : ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.tostring(ip-address-segment)]}'
 EOF
   tags = {
     Name = var.k8s-master-instance-tag-name
