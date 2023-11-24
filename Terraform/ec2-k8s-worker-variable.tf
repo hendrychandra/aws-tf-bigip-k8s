@@ -88,9 +88,15 @@ variable "k8s-worker-public-network-interface-tag-name" {
 variable "k8s-worker-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s worker1 node on the Public Subnet"
   type        = map(number)
+  # Since the key is of string value, internally the map will be
+  # stored with the key string value sorted in ascending order.
+  # Therefore, you may need to give the key string (i.e. sub domain
+  # name) in ascending order along with the IP Address order (i.e.
+  # Last Segment of IPv4).
   default = {
-    "worker-one" = 201
-    "worker-two" = 202
+    "worker-a" = 201
+    "worker-b" = 202
+    "worker-c" = 203
   }
   # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.k8s-worker-public-network-interface-private-ips}"

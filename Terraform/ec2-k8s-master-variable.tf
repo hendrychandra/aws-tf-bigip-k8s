@@ -108,9 +108,18 @@ variable "k8s-master-public-network-interface-tag-name" {
 variable "k8s-master-public-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Public Subnet"
   type        = map(number)
+  # Since the key is of string value, internally the map will be
+  # stored with the key string value sorted in ascending order.
+  # Therefore, you may need to give the key string (i.e. sub domain
+  # name) in ascending order along with the IP Address order (i.e.
+  # Last Segment of IPv4).
+  #
+  # Note that the first entry of the map after being sorted internally
+  # will be used as reference IP Address for the Master node.
   default = {
     "demo" = 11
     "show" = 12
+    "test" = 13
   }
   # This will be combined with aws-vpc-cidr-prefix, and the aws-public-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${var.k8s-master-public-network-interface-private-ips}"
@@ -127,7 +136,7 @@ variable "k8s-master-private-network-interface-source-dest-check" {
 variable "k8s-master-private-network-interface-private-ips" {
   description = "The Last Segment of IPv4 of AWS Network Interface for K8s Master1 node on the Private Subnet"
   type        = list(number)
-  default     = [11, 12]
+  default     = [11, 12, 13]
   # This will be combined with aws-vpc-cidr-prefix, and the aws-private-subnet-cidr-infix.
   # Such as: "${var.aws-vpc-cidr-prefix}.${var.aws-private-subnet-cidr-infix}.${var.k8s-master-private-network-interface-private-ips}"
 }

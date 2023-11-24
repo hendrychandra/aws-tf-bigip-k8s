@@ -90,7 +90,7 @@ resource "aws_instance" "tf-k8s-worker-instance" {
   }
   user_data = <<EOF
 #!/bin/bash
-cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapWorker.sh;sudo chmod 777 /home/ubuntu/VMWrapWorker.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapWorker.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapWorker.sh ${[for ip-address-segment in var.k8s-master-public-network-interface-private-ips : ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.tostring(ip-address-segment)] [for ip-address-segment in var.k8s-worker-public-network-interface-private-ips : ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.tostring(ip-address-segment)]}'
+cd /home/ubuntu;sudo curl -fksSLO --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/VMWrapWorker.sh;sudo chmod 777 /home/ubuntu/VMWrapWorker.sh;sudo chown $(id -u):$(id -g) /home/ubuntu/VMWrapWorker.sh;runuser -l ubuntu -c '/home/ubuntu/VMWrapWorker.sh ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${tolist([for ip-address-segment in var.k8s-master-public-network-interface-private-ips : tostring(ip-address-segment)])[0]} %{for ip-address-segment in var.k8s-worker-public-network-interface-private-ips} ${var.aws-vpc-cidr-prefix}.${var.aws-public-subnet-cidr-infix}.${tostring(ip-address-segment)} %{endfor}'
 EOF
   tags = {
     Name = var.k8s-worker-instance-tag-name
