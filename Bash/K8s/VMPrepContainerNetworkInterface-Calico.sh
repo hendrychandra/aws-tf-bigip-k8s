@@ -26,7 +26,7 @@
 # To Do :
 # Find a Better Container Network Interface (CNI), Calico has been acting up too much, pushing us towards their own agendas, similar to what Microsoft or Google have been doing.
 
-sudo echo "Executing $0 $1 $2 $3 $4 $5 $6 $7 $8 $9"
+sudo echo "Executing ${0} with $# parameter(s) : ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10} ${11} ${12} ${13} ${14} ${15} ${16} ${17} ${18} ${19} ${20} ${21} ${22}"
 cd $HOME
 
 cd $HOME;sudo curl -fksSL -O --retry 333 https://raw.githubusercontent.com/hendrychandra/aws-tf-bigip-k8s/main/Bash/K8s/K8sServerEnvironmentVariable.sh;sudo chmod 777 $HOME/K8sServerEnvironmentVariable.sh;sudo chown $(id -u):$(id -g) $HOME/K8sServerEnvironmentVariable.sh;source $HOME/K8sServerEnvironmentVariable.sh

@@ -93,6 +93,10 @@ variable "k8s-worker-public-network-interface-private-ips" {
   # Therefore, you may need to give the key string (i.e. sub domain
   # name) in ascending order along with the IP Address order (i.e.
   # Last Segment of IPv4).
+  #
+  # Use empty map {} , such example below :
+  # default = {}
+  # If you want a single node cluster (i.e. no worker node)
   default = {
     "worker-a" = 201
     "worker-b" = 202
